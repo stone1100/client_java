@@ -43,6 +43,9 @@ public class WritePoint {
 
 		for (int i = 0; i < 10; i++) {
 			Point point = Point.builder("host.cpu").addLast("load", 1.0)
+					.namespace("system")
+					.addExemplar("c_exemplar1", "jtraceId1", "jspanId1", 10)
+					.addExemplar("c_exemplar2", "jtraceId2", "jspanId2", 100)
 					.addTag("ip", "1.1.1." + i).build();
 			boolean ok = write.put(point);
 			System.out.println("write status: " + ok);

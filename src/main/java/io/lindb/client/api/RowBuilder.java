@@ -28,6 +28,7 @@ import io.lindb.client.Constants;
 import io.lindb.client.flat.metrics.v1.CompoundField;
 import io.lindb.client.flat.metrics.v1.KeyValue;
 import io.lindb.client.flat.metrics.v1.Metric;
+import io.lindb.client.flat.metrics.v1.Exemplar;
 import io.lindb.client.flat.metrics.v1.SimpleField;
 import io.lindb.client.util.StringUtils;
 
@@ -52,16 +53,14 @@ public class RowBuilder {
 	 * @return the data of point
 	 */
 	public byte[] build(final Point point, Map<String, String> defaultTags) {
-		// metric name
-		int nameOffset = this.fb.createString(point.getName());
-
 		// namespace
 		String ns = point.getNamespace();
 		if (StringUtils.isEmpty(ns)) {
 			ns = Constants.DEFAULT_NAMESPACE;
 		}
 		int namespaceOffset = this.fb.createString(ns);
-
+		// metric name
+		int nameOffset = this.fb.createString(point.getName());
 		// tags
 		Map<String, String> tags = point.getTags();
 		int size = 0;
@@ -74,7 +73,6 @@ public class RowBuilder {
 		int[] offsets = null;
 		int tagOffset = 0;
 		if (size != 0) {
-
 			offsets = new int[size];
 			int offset = 0;
 			if (tags != null) {
@@ -102,6 +100,20 @@ public class RowBuilder {
 			simpleFieldOffset = this.fb.createVectorOfTables(simpleFieldsOffsets);
 		}
 
+		// simple exemplar
+		List<ExemplarField> exemplars = point.getExemplars();
+		int[] exemplarFieldsOffsets = null;
+		int exemplarsOffset = 0;
+		if (exemplars != null) {
+			exemplarFieldsOffsets = new int[exemplars.size()];
+			int idx = 0;
+			for (ExemplarField exemplar : exemplars) {
+				exemplarFieldsOffsets[idx] = exemplar.write(this);
+				idx++;
+			}
+			exemplarsOffset = this.fb.createVectorOfTables(exemplarFieldsOffsets);
+		}
+
 		// compound field
 		io.lindb.client.api.CompoundField compoundField = point.getCompoundField();
 		int compoundFieldOffset = 0;
@@ -124,6 +136,10 @@ public class RowBuilder {
 		// write simple fields
 		if (simpleFieldsOffsets != null) {
 			Metric.addSimpleFields(this.fb, simpleFieldOffset);
+		}
+		// write exemplars
+		if (exemplarFieldsOffsets != null) {
+			Metric.addExemplars(this.fb, exemplarsOffset);
 		}
 		// write compound field
 		if (compoundField != null) {
@@ -153,6 +169,28 @@ public class RowBuilder {
 		SimpleField.addValue(this.fb, value);
 
 		return SimpleField.endSimpleField(this.fb);
+	}
+
+	/**
+	 * Write exemplar field into flat buffer.
+	 * 
+	 * @param name     name
+	 * @param traceId  trace id
+	 * @param spanId   span id
+	 * @param duration duration of span
+	 * @return exemplar offset
+	 */
+	public int addExemplarField(String name, String traceId, String spanId, long duration) {
+		int nameOffset = this.fb.createString(name);
+		int traceIdOffset = this.fb.createString(traceId);
+		int spanIdOffset = this.fb.createString(spanId);
+		Exemplar.startExemplar(this.fb);
+		Exemplar.addName(this.fb, nameOffset);
+		Exemplar.addTraceId(this.fb, traceIdOffset);
+		Exemplar.addSpanId(this.fb, spanIdOffset);
+		Exemplar.addDuration(this.fb, duration);
+
+		return Exemplar.endExemplar(this.fb);
 	}
 
 	/**

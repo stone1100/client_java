@@ -51,6 +51,7 @@ public class RowBuilderTest {
 		Map<String, String> defaultTags = new HashMap<>();
 		defaultTags.put("key1", "value2");
 		point = Point.builder("cpu").addTag("key", "value")
+				.addExemplar("exemplar", "traceId", "spanId", 100)
 				.addHistogram(1.0, 1.0, 1.0, 1.0, new double[] { 1.0 }, new double[] { 1.2 })
 				.build();
 		data2 = builder.build(point, defaultTags);

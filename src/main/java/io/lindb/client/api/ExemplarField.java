@@ -19,34 +19,50 @@
 package io.lindb.client.api;
 
 /**
- * Data point simple field.
+ * Data point exemplar field.
  */
-public final class SimpleField implements Field {
-
-	private final String name;
-	private final FieldType type;
-	private final double value;
+public final class ExemplarField implements Field {
+	private String name;
+	private String traceId;
+	private String spanId;
+	private long duration;
 
 	/**
-	 * Create simple field instance.
+	 * Create exemplar field instance.
 	 * 
-	 * @param name  field name
-	 * @param type  field type
-	 * @param value field value
+	 * @param name     name
+	 * @param traceId  trace id
+	 * @param spanId   span id
+	 * @param duration duration of span
 	 */
-	protected SimpleField(String name, FieldType type, double value) {
+	public ExemplarField(String name, String traceId, String spanId, long duration) {
 		this.name = name;
-		this.type = type;
-		this.value = value;
+		this.traceId = traceId;
+		this.spanId = spanId;
+		this.duration = duration;
+	}
+
+	/**
+	 * Create exemplar field instance.
+	 * 
+	 * @param name     name
+	 * @param traceId  trace id
+	 * @param spanId   span id
+	 * @param duration duration of span
+	 */
+	public void reset(String traceId, String spanId, long duration) {
+		this.traceId = traceId;
+		this.spanId = spanId;
+		this.duration = duration;
 	}
 
 	/*
-	 * Write simple field into {@link RowBuilder}.
+	 * Write exemplar field into {@link RowBuilder}.
 	 * 
 	 * @see io.lindb.client.api.Field#write(io.lindb.client.api.RowBuilder)
 	 */
 	@Override
 	public int write(RowBuilder builder) {
-		return builder.addSimpleField(this.name, this.type, this.value);
+		return builder.addExemplarField(this.name, this.traceId, this.spanId, this.duration);
 	}
 }

@@ -48,6 +48,11 @@ public final class Metric extends Table {
   public io.lindb.client.flat.metrics.v1.SimpleField.Vector simpleFieldsVector(io.lindb.client.flat.metrics.v1.SimpleField.Vector obj) { int o = __offset(14); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
   public io.lindb.client.flat.metrics.v1.CompoundField compoundField() { return compoundField(new io.lindb.client.flat.metrics.v1.CompoundField()); }
   public io.lindb.client.flat.metrics.v1.CompoundField compoundField(io.lindb.client.flat.metrics.v1.CompoundField obj) { int o = __offset(16); return o != 0 ? obj.__assign(__indirect(o + bb_pos), bb) : null; }
+  public io.lindb.client.flat.metrics.v1.Exemplar exemplars(int j) { return exemplars(new io.lindb.client.flat.metrics.v1.Exemplar(), j); }
+  public io.lindb.client.flat.metrics.v1.Exemplar exemplars(io.lindb.client.flat.metrics.v1.Exemplar obj, int j) { int o = __offset(18); return o != 0 ? obj.__assign(__indirect(__vector(o) + j * 4), bb) : null; }
+  public int exemplarsLength() { int o = __offset(18); return o != 0 ? __vector_len(o) : 0; }
+  public io.lindb.client.flat.metrics.v1.Exemplar.Vector exemplarsVector() { return exemplarsVector(new io.lindb.client.flat.metrics.v1.Exemplar.Vector()); }
+  public io.lindb.client.flat.metrics.v1.Exemplar.Vector exemplarsVector(io.lindb.client.flat.metrics.v1.Exemplar.Vector obj) { int o = __offset(18); return o != 0 ? obj.__assign(__vector(o), 4, bb) : null; }
 
   public static int createMetric(FlatBufferBuilder builder,
       int namespaceOffset,
@@ -56,10 +61,12 @@ public final class Metric extends Table {
       int keyValuesOffset,
       long hash,
       int simpleFieldsOffset,
-      int compoundFieldOffset) {
-    builder.startTable(7);
+      int compoundFieldOffset,
+      int exemplarsOffset) {
+    builder.startTable(8);
     Metric.addHash(builder, hash);
     Metric.addTimestamp(builder, timestamp);
+    Metric.addExemplars(builder, exemplarsOffset);
     Metric.addCompoundField(builder, compoundFieldOffset);
     Metric.addSimpleFields(builder, simpleFieldsOffset);
     Metric.addKeyValues(builder, keyValuesOffset);
@@ -68,7 +75,7 @@ public final class Metric extends Table {
     return Metric.endMetric(builder);
   }
 
-  public static void startMetric(FlatBufferBuilder builder) { builder.startTable(7); }
+  public static void startMetric(FlatBufferBuilder builder) { builder.startTable(8); }
   public static void addNamespace(FlatBufferBuilder builder, int namespaceOffset) { builder.addOffset(0, namespaceOffset, 0); }
   public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(1, nameOffset, 0); }
   public static void addTimestamp(FlatBufferBuilder builder, long timestamp) { builder.addLong(2, timestamp, 0L); }
@@ -80,6 +87,9 @@ public final class Metric extends Table {
   public static int createSimpleFieldsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
   public static void startSimpleFieldsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static void addCompoundField(FlatBufferBuilder builder, int compoundFieldOffset) { builder.addOffset(6, compoundFieldOffset, 0); }
+  public static void addExemplars(FlatBufferBuilder builder, int exemplarsOffset) { builder.addOffset(7, exemplarsOffset, 0); }
+  public static int createExemplarsVector(FlatBufferBuilder builder, int[] data) { builder.startVector(4, data.length, 4); for (int i = data.length - 1; i >= 0; i--) builder.addOffset(data[i]); return builder.endVector(); }
+  public static void startExemplarsVector(FlatBufferBuilder builder, int numElems) { builder.startVector(4, numElems, 4); }
   public static int endMetric(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;

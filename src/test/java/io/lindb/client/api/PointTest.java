@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -113,5 +114,16 @@ public class PointTest {
 		assertEquals("value2", point.getTags().get("key2"));
 		assertNotNull(point.getCompoundField());
 		assertEquals(1.0, point.getCompoundField().getCount(), 0);
+
+		point = Point.builder("name").namespace("ns")
+				.addExemplar("name", "", "spanId", 1)
+				.addExemplar("name", "traceId", "", 1)
+				.addExemplar("", "", "spanId", 1)
+				.addExemplar("name", "traceId", null, 1)
+				.addExemplar("name", "traceId", "spanId", 1)
+				.build();
+
+		List<ExemplarField> exemplars = point.getExemplars();
+		assertEquals(1, exemplars.size());
 	}
 }

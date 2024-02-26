@@ -88,7 +88,9 @@ public class Point {
 			if (this.point.tags == null) {
 				this.point.tags = new HashMap<>();
 			}
-			this.point.tags.putAll(tags);
+			for (Map.Entry<String, String> tag : tags.entrySet()) {
+				this.addTag(tag.getKey(), tag.getValue());
+			}
 			return this;
 		}
 
@@ -179,6 +181,31 @@ public class Point {
 		}
 
 		/**
+		 * Add exempalr with name/traceId/spanId/duration.
+		 * 
+		 * @param name     name
+		 * @param traceId  trace id
+		 * @param spanId   span id
+		 * @param duration duration of span
+		 * @return builder
+		 */
+		public Builder addExemplar(String name, String traceId, String spanId, long duration) {
+			if (StringUtils.isEmpty(name)) {
+				LOGGER.warn("name cannot be empty");
+				return this;
+			}
+			if (StringUtils.isEmpty(traceId) || StringUtils.isEmpty(spanId)) {
+				LOGGER.warn("traceId/spanId cannot be empty");
+				return this;
+			}
+			if (this.point.exemplars == null) {
+				this.point.exemplars = new ArrayList<>();
+			}
+			this.point.exemplars.add(new ExemplarField(name, traceId, spanId, duration));
+			return this;
+		}
+
+		/**
 		 * Return the point with setting.
 		 * 
 		 * @return point
@@ -251,6 +278,7 @@ public class Point {
 	private long timestamp;
 	private Map<String, String> tags;
 	private List<Field> simpleFields;
+	private List<ExemplarField> exemplars;
 	private CompoundField compoundField;
 
 	private Point(String name, long timestamp) {
@@ -295,12 +323,21 @@ public class Point {
 	}
 
 	/**
-	 * Return the simple fiels.
+	 * Return the simple fields.
 	 * 
 	 * @return field
 	 */
 	public List<Field> getSimpleFields() {
 		return simpleFields;
+	}
+
+	/**
+	 * Return the exemplar fields.
+	 * 
+	 * @return exemplar
+	 */
+	public List<ExemplarField> getExemplars() {
+		return exemplars;
 	}
 
 	/**

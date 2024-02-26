@@ -28,41 +28,35 @@ public final class Exemplar extends Table {
   public void __init(int _i, ByteBuffer _bb) { __reset(_i, _bb); }
   public Exemplar __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
 
-  public byte spanId(int j) { int o = __offset(4); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
-  public int spanIdLength() { int o = __offset(4); return o != 0 ? __vector_len(o) : 0; }
-  public ByteVector spanIdVector() { return spanIdVector(new ByteVector()); }
-  public ByteVector spanIdVector(ByteVector obj) { int o = __offset(4); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
-  public ByteBuffer spanIdAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
-  public ByteBuffer spanIdInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
-  public byte traceId(int j) { int o = __offset(6); return o != 0 ? bb.get(__vector(o) + j * 1) : 0; }
-  public int traceIdLength() { int o = __offset(6); return o != 0 ? __vector_len(o) : 0; }
-  public ByteVector traceIdVector() { return traceIdVector(new ByteVector()); }
-  public ByteVector traceIdVector(ByteVector obj) { int o = __offset(6); return o != 0 ? obj.__assign(__vector(o), bb) : null; }
-  public ByteBuffer traceIdAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
-  public ByteBuffer traceIdInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
-  public long duration() { int o = __offset(8); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
+  public String name() { int o = __offset(4); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer nameAsByteBuffer() { return __vector_as_bytebuffer(4, 1); }
+  public ByteBuffer nameInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 4, 1); }
+  public String spanId() { int o = __offset(6); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer spanIdAsByteBuffer() { return __vector_as_bytebuffer(6, 1); }
+  public ByteBuffer spanIdInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 6, 1); }
+  public String traceId() { int o = __offset(8); return o != 0 ? __string(o + bb_pos) : null; }
+  public ByteBuffer traceIdAsByteBuffer() { return __vector_as_bytebuffer(8, 1); }
+  public ByteBuffer traceIdInByteBuffer(ByteBuffer _bb) { return __vector_in_bytebuffer(_bb, 8, 1); }
+  public long duration() { int o = __offset(10); return o != 0 ? bb.getLong(o + bb_pos) : 0L; }
 
   public static int createExemplar(FlatBufferBuilder builder,
+      int nameOffset,
       int spanIdOffset,
       int traceIdOffset,
       long duration) {
-    builder.startTable(3);
+    builder.startTable(4);
     Exemplar.addDuration(builder, duration);
     Exemplar.addTraceId(builder, traceIdOffset);
     Exemplar.addSpanId(builder, spanIdOffset);
+    Exemplar.addName(builder, nameOffset);
     return Exemplar.endExemplar(builder);
   }
 
-  public static void startExemplar(FlatBufferBuilder builder) { builder.startTable(3); }
-  public static void addSpanId(FlatBufferBuilder builder, int spanIdOffset) { builder.addOffset(0, spanIdOffset, 0); }
-  public static int createSpanIdVector(FlatBufferBuilder builder, byte[] data) { return builder.createByteVector(data); }
-  public static int createSpanIdVector(FlatBufferBuilder builder, ByteBuffer data) { return builder.createByteVector(data); }
-  public static void startSpanIdVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
-  public static void addTraceId(FlatBufferBuilder builder, int traceIdOffset) { builder.addOffset(1, traceIdOffset, 0); }
-  public static int createTraceIdVector(FlatBufferBuilder builder, byte[] data) { return builder.createByteVector(data); }
-  public static int createTraceIdVector(FlatBufferBuilder builder, ByteBuffer data) { return builder.createByteVector(data); }
-  public static void startTraceIdVector(FlatBufferBuilder builder, int numElems) { builder.startVector(1, numElems, 1); }
-  public static void addDuration(FlatBufferBuilder builder, long duration) { builder.addLong(2, duration, 0L); }
+  public static void startExemplar(FlatBufferBuilder builder) { builder.startTable(4); }
+  public static void addName(FlatBufferBuilder builder, int nameOffset) { builder.addOffset(0, nameOffset, 0); }
+  public static void addSpanId(FlatBufferBuilder builder, int spanIdOffset) { builder.addOffset(1, spanIdOffset, 0); }
+  public static void addTraceId(FlatBufferBuilder builder, int traceIdOffset) { builder.addOffset(2, traceIdOffset, 0); }
+  public static void addDuration(FlatBufferBuilder builder, long duration) { builder.addLong(3, duration, 0L); }
   public static int endExemplar(FlatBufferBuilder builder) {
     int o = builder.endTable();
     return o;
